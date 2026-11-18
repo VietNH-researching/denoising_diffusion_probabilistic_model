@@ -48,3 +48,14 @@ every stage), open [`notebooks/sine/sine.ipynb`](notebooks/sine/sine.ipynb).
 - [docs/METHOD.md](docs/METHOD.md): the math, step by step
 - [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md): what was tried, and what worked
 - [CODEMAP.md](CODEMAP.md): a map of the code
+
+## References
+
+- J. Sohl-Dickstein, E. Weiss, N. Maheswaranathan, S. Ganguli.
+  *Deep Unsupervised Learning using Nonequilibrium Thermodynamics.* ICML 2015.
+  [arXiv:1503.03585](https://arxiv.org/abs/1503.03585)
+- J. Ho, A. Jain, P. Abbeel. *Denoising Diffusion Probabilistic Models.*
+  NeurIPS 2020. [arXiv:2006.11239](https://arxiv.org/abs/2006.11239)
+- Y. Song, J. Sohl-Dickstein, D. P. Kingma, A. Kumar, S. Ermon, B. Poole.
+  *Score-Based Generative Modeling through Stochastic Differential Equations.*
+  ICLR 2021. [arXiv:2011.13456](https://arxiv.org/abs/2011.13456)
