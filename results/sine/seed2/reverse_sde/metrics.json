@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "method": "ddpm",
+  "experiment": "sine",
+  "run_id": "reverse_sde",
+  "seed": 2,
+  "metrics": {
+    "curve_distance": {
+      "all": 0.27805542945861816,
+      "0-3": 0.16450366377830505,
+      "3-6": 0.3027401268482208,
+      "6-10": 0.4200271964073181
+    },
+    "curve_distance_ref": {
+      "all": 0.03443027287721634,
+      "0-3": 0.033257126808166504,
+      "3-6": 0.033662065863609314,
+      "6-10": 0.03563809394836426
+    },
+    "w1_x": 0.5232116834553889,
+    "std_x": 5.40689754486084,
+    "std_x_ref": 5.745129585266113,
+    "frac_outside": 0.0162,
+    "final_loss": 0.45341420233249663,
+    "n_samples": 10000
+  },
+  "config": {
+    "data": {
+      "fn": "sin",
+      "x_min": -10.0,
+      "x_max": 10.0,
+      "noise_std": 0.05
+    },
+    "model": {
+      "hidden_dims": [
+        256,
+        256
+      ]
+    },
+    "training": {
+      "T": 4.0,
+      "t_min": 0.0001,
+      "eps": 0.1,
+      "normalize": false,
+      "n_iter": 1000,
+      "batch_size": 512,
+      "learning_rate": 0.01,
+      "time_sampler": "uniform",
+      "n_steps": 200,
+      "n_samples": 10000
+    }
+  },
+  "commit": null,
+  "timestamp": "2026-11-18T08:06:59Z",
+  "notes": "Reverse-SDE samples vs fresh data draws."
+}

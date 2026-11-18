@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=67"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ddpm"
+version = "0.1.0"
+description = "A small score-based diffusion model (OU forward process, reverse SDE) in JAX"
+requires-python = ">=3.10"
+dependencies = [
+    "jax",
+    "jaxlib",
+    "flax",
+    "optax",
+    "numpy",
+    "scipy",
+]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-xdist"]
+notebooks = ["matplotlib", "tqdm", "jupytext"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ddpm*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

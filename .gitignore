@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Run outputs: only results/**/metrics.json is tracked
+/results/**/log.txt
+/results/**/stdout.log
+/results/**/figures/
+/results/sweep*
+
+# Reference material (not part of this repo)
+/references/
