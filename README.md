@@ -1,75 +1,50 @@
-# ddpm
+# Denoising Diffusion Probabilistic Model
 
-A small score-based diffusion model in JAX. It learns to generate 2-D points on a
-noisy sine curve, $(x, \sin x + \varepsilon)$ with $x \sim \mathcal U(-10, 10)$:
+**Teaching a neural network to draw a sine wave out of pure noise.**
 
-1. **Forward process.** An Ornstein–Uhlenbeck SDE $dX = -\tfrac12 X\,dt + dW$
-   turns the data into $\mathcal N(0, I)$ by time $T$.
-2. **Training.** An MLP on $(t, x_t)$ predicts the noise and returns the
-   denoised estimate $\hat x_0$; the loss is the noise-prediction loss.
-3. **Sampling.** The reverse SDE, driven by the score from $\hat x_0$, runs from
-   $\mathcal N(0, I)$ at $t = T$ back to $t = 0$ with Euler–Maruyama.
+This is a tiny diffusion model, the same idea behind modern image generators,
+squeezed down to 2-D points so you can watch every step of it happen. It is
+written in [JAX](https://github.com/jax-ml/jax) and trains in about 15 seconds
+on a GPU.
 
-The math is in [docs/METHOD.md](docs/METHOD.md). How `T` was chosen, and why the
-data is not rescaled, is in [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md).
+![The idea: the forward process turns data into noise; a neural network learns the backward process that turns noise into data](assets/overview.png)
 
-## Installation
+The idea in one picture: destroying structure is easy, so we do it on purpose,
+one small step at a time. A neural network then learns to reverse each small
+step. Once it has, any blob of random noise can be walked back into new data.
 
-```bash
-pip install -e ".[test,notebooks]"
-```
+## Forward/Noising Process
 
-Install the JAX build that matches your accelerator; see the
-[JAX installation guide](https://docs.jax.dev/en/latest/installation.html).
+Start with points on a wiggly sine curve. Then add a little Gaussian noise,
+again and again, while gently pulling everything toward the origin. The wave
+blurs, then melts, and by the end it's just a shapeless blob of noise.
 
-## Running
+![Noising: points on a sine curve gradually dissolve into a Gaussian blob](assets/noising.png)
 
-The experiment is `notebooks/sine/sine.py` (Jupytext percent format), paired
-with `sine.ipynb`. Hyperparameters are in `ModelConfig` and `TrainingConfig`;
-the data is `CurveData()`. Run the script from its own folder:
+## Backward/Sampling Process
 
-```bash
-cd notebooks/sine
-python sine.py                 # writes to results/sine/
-RUN_SEED=1 python sine.py      # writes to results/sine/seed1/
-```
+Now teach a small neural network to undo one tiny step of that blurring. Start
+from a fresh blob of random noise, run the network backwards in time, and the
+sine wave reappears from nothing.
 
-`scripts/run_seeds.sh` runs seeds 0, 1 and 2 (about 20 s each on one GPU).
+![Sampling: a Gaussian blob gradually sharpens back into a sine curve](assets/sampling.png)
 
-A run writes `log.txt`, `figures/` and `reverse_sde/metrics.json` with:
+The colours follow each point through the process. In the sampling figure, every
+point was coloured by where it *ended up*, so you can see the network sorting
+the noise left to right well before the curve takes shape.
 
-- **sharpness**: median $|y - \sin x|$ overall and per $|x|$ band
-  (`curve_distance`; exact data scores ≈ 0.034);
-- **coverage**: Wasserstein-1 distance between generated and true $x$ values
-  (`w1_x`), the std of $x$, and the share of samples outside $[-10, 10]$.
-
-The reported results are in `results/sine/seed{0,1,2}/`:
-
-| seed | curve distance (all) | 0–3 | 3–6 | 6–10 | W1 x | std x (true ≈ 5.77) |
-|---|---|---|---|---|---|---|
-| 0 | 0.311 | 0.159 | 0.333 | 0.425 | 0.47 | 6.02 |
-| 1 | 0.304 | 0.168 | 0.317 | 0.528 | 0.83 | 5.52 |
-| 2 | 0.278 | 0.165 | 0.303 | 0.420 | 0.52 | 5.41 |
-
-The notebook enables deterministic GPU ops, so a seed gives the same run on the
-same GPU model and software versions.
-
-## Tests
+## Try it yourself
 
 ```bash
-pytest
+pip install -e ".[notebooks]"
+python scripts/make_readme_figures.py    # trains a model and redraws the figures above
 ```
 
-## Layout
+For the full walkthrough (data, noising, training, sampling, with plots at
+every stage), open [`notebooks/sine/sine.ipynb`](notebooks/sine/sine.ipynb).
 
-```
-ddpm/                  package: data, OU process, time grids, denoiser, loss, reverse-SDE sampler
-notebooks/sine/        the experiment (sine.py + paired sine.ipynb)
-docs/                  method summary and experiment notes
-scripts/run_seeds.sh   seeds 0-2 of every experiment
-results/               metrics.json records
-tests/                 pytest suite
-```
+## Curious how it works?
 
-See [CODEMAP.md](CODEMAP.md) for the module map and
-[CONTRIBUTING.md](CONTRIBUTING.md) for development notes.
+- [docs/METHOD.md](docs/METHOD.md): the math, step by step
+- [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md): what was tried, and what worked
+- [CODEMAP.md](CODEMAP.md): a map of the code
